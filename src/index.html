@@ -51,13 +51,71 @@
   #wrapper img {
     width: 100%;
   }
-  </style>
+
+  #chess-cover {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    pointer-events: none;
+  }
+
+  #chess-cover i {
+    background: #2a2a2a;
+    display: block;
+  }
+
+  #chess-cover i.l {
+    background: #f0f0f0;
+  }
+</style>
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="manifest" href="site.webmanifest">
 </head>
 <body>
+  <div id="chess-cover"></div>
+  <script>
+  (function () {
+    var size = 80;
+    var cover = document.getElementById('chess-cover');
+    var cols = Math.ceil(window.innerWidth / size);
+    var rows = Math.ceil(window.innerHeight / size);
+    cover.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+    cover.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
+    var n = cols * rows;
+    var tiles = new Array(n);
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < n; i++) {
+      var t = document.createElement('i');
+      var r = (i / cols) | 0;
+      var c = i % cols;
+      if ((r + c) % 2 === 0) t.className = 'l';
+      frag.appendChild(t);
+      tiles[i] = t;
+    }
+    cover.appendChild(frag);
+    for (var k = tiles.length - 1; k > 0; k--) {
+      var j = (Math.random() * (k + 1)) | 0;
+      var tmp = tiles[k]; tiles[k] = tiles[j]; tiles[j] = tmp;
+    }
+    var total = 1200;
+    var start = 0;
+    var idx = 0;
+    function tick(now) {
+      if (!start) start = now;
+      var target = Math.min(n, ((now - start) / total * n) | 0);
+      while (idx < target) {
+        tiles[idx].style.visibility = 'hidden';
+        idx++;
+      }
+      if (idx < n) requestAnimationFrame(tick);
+      else cover.remove();
+    }
+    requestAnimationFrame(tick);
+  })();
+  </script>
   <div id="wrapper">
     <img src="logo.png">
     <span>Bad Bishop AB • <a href="mailto:victoria@badbishop.se">victoria@badbishop.se</a></span>
