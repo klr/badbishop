@@ -57,6 +57,8 @@
     inset: 0;
     z-index: 9999;
     display: grid;
+    place-content: center;
+    overflow: hidden;
     pointer-events: none;
   }
 
@@ -78,12 +80,13 @@
   <div id="chess-cover"></div>
   <script>
   (function () {
-    var size = 80;
+    var target = 80;
     var cover = document.getElementById('chess-cover');
-    var cols = Math.ceil(window.innerWidth / size);
-    var rows = Math.ceil(window.innerHeight / size);
-    cover.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
-    cover.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
+    var cols = Math.max(1, Math.round(window.innerWidth / target));
+    var size = window.innerWidth / cols;
+    var rows = Math.ceil(window.innerHeight / size) + 1;
+    cover.style.gridTemplateColumns = 'repeat(' + cols + ', ' + size + 'px)';
+    cover.style.gridTemplateRows = 'repeat(' + rows + ', ' + size + 'px)';
     var n = cols * rows;
     var tiles = new Array(n);
     var frag = document.createDocumentFragment();
